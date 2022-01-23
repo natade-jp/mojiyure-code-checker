@@ -29,16 +29,26 @@ public class FileRewriter implements Rewriter {
 	/**
 	 * ファイルを設定します。
 	 * @param filename
+	 * @return 成功でtrue
 	 */
-	private void setFile(String filename) {
+	private boolean setFile(String filename) {
 		this.close();
+		boolean out = true;
 		this.filename = filename;
 		try {
-			this.rewriter = new RandomAccessFile(this.filename, "rw");
-		} catch (FileNotFoundException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
+			File file = new File(this.filename);
+			if(file.getParentFile().mkdirs() == false) {
+				System.out.println("フォルダを作成できない[" + file.getParentFile() + "]");
+				return false;
+			}
+			this.rewriter = new RandomAccessFile(file, "rw");
 		}
+		catch (FileNotFoundException e) {
+			this.close();
+			e.printStackTrace();
+	    	out = false;
+		}
+		return(out);
 	}
 
 	/**

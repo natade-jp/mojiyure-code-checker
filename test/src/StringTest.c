@@ -1,27 +1,17 @@
-#include <iostream>
-#include <string>
+#include <stdio.h>
 
-using namespace std;
-
-
-int main(){
+int main(void){
 	
-	{
-		string *x = new string("ヒープ領域");
-		cout << *x << endl;
-		delete x;
-	}
+	// 挨拶
+	printf("串揚げたべたい\n");
 	
-	{
-		string x("スタック領域");
-		cout << x << endl;
-	}
+	/*
+		printf("ここはコメントアウトされています。");
+	*/
 	
+	printf("美味しい寿司を食べる\n");
+	printf("おいしい寿司をたべる\n");
+	printf("フォルダを開く\n");
+	printf("フォルダーをひらく\n");
 	return 0;
 }
-
-/*
-# ./StringTest
-ヒープ領域
-スタック領域
-*/

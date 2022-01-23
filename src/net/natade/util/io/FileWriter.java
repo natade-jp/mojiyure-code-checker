@@ -16,7 +16,7 @@ public class FileWriter implements Writer {
 	/**
 	 * BufferedInputStreamに用いるバッファサイズ
 	 */
-    private static int defaultBufferSize = 65536;
+	private static int defaultBufferSize = 65536;
 
 	/**
 	 * 指定したバイナリを指定した名前で保存します。
@@ -29,7 +29,12 @@ public class FileWriter implements Writer {
 		BufferedOutputStream bufferedstream = null;
 		boolean out = true;
 		try {
-			outputstream = new FileOutputStream(filename);
+			File file = new File(filename);
+			if(file.getParentFile().mkdirs() == false) {
+				System.out.println("フォルダを作成できない[" + file.getParentFile() + "]");
+				return false;
+			}
+			outputstream = new FileOutputStream(file);
 			bufferedstream = new BufferedOutputStream(outputstream,defaultBufferSize);
 			bufferedstream.write(binary);
 	    }

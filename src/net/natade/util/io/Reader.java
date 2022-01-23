@@ -52,13 +52,13 @@ public interface Reader {
 	public String getString(int offset,int size);
 
 	/**
-	 * 文字を取得します。
+	 * 改行ごとの文字配列を取得します。
 	 * @return
 	 */
 	public String[] getStringArray();
 
 	/**
-	 * 指定した位置の文字を取得します。
+	 * 指定した箇所から改行ごとの文字配列を取得します。
 	 * @param offset
 	 * @param size
 	 * @return

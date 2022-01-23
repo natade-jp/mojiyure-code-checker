@@ -1,4 +1,4 @@
-package net.natade.util;
+package net.natade.util.string;
 
 /**
  * utf-16(String) を utf-32 (int)として扱います

@@ -4,11 +4,47 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 import net.natade.util.ArgumentAnalysis;
+import net.natade.util.io.FileReader;
 import net.natade.util.io.FileUtil;
+import net.natade.util.io.FileWriter;
 import net.natade.util.io.PetternFileFilter;
+import net.natade.util.string.Code;
 
 class ExtractText {
 
+	/**
+	 * 指定したテキスト列からテキストのみを抽出する
+	 * コメントアウトされた部分は無視する
+	 * @param text
+	 * @return
+	 */
+	public static String extractStringFromCode(String text) {
+		Code code = new Code(text);
+		code.removeComment();
+		return code.getExtractedString();
+	}
+
+	/**
+	 * 指定したファイルを読み込み、テキストのみ抽出して、指定したファイルに書き込む
+	 * @param input_file
+	 * @param output_file
+	 */
+	public static void extractTextFromFile(File input_file, File output_file) {
+		FileReader reader = new FileReader(input_file);
+		String input_text = reader.getString();
+		reader.close();
+
+		FileWriter writer = new FileWriter(output_file);
+		String output_text = ExtractText.extractStringFromCode(input_text);
+		writer.setLength(0);
+		writer.setString(output_text);
+		writer.close();
+	}
+
+	/**
+	 * メイン関数
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		ArgumentAnalysis args_data = new ArgumentAnalysis(args);
 		String input_folder_string = args_data.getValue(Pattern.compile("-src", Pattern.CASE_INSENSITIVE));
@@ -32,27 +68,28 @@ class ExtractText {
 		
 		Pattern extensin_pattern = null;
 		if(extensin_string == null) {
-			extensin_pattern = Pattern.compile("\\.(c|cpp|cs|java|js)$", Pattern.CASE_INSENSITIVE);
+			extensin_pattern = Pattern.compile("\\.(c|cpp|cs|java|js|json)$", Pattern.CASE_INSENSITIVE);
 		}
 		else {
 			extensin_pattern = Pattern.compile(extensin_string, Pattern.CASE_INSENSITIVE);
 		}
 		
 		File[] codelist = FileUtil.findList(input_folder, new PetternFileFilter(extensin_pattern));
-		System.out.println(input_folder.getAbsolutePath());
+		
+		System.out.println("start");
 		
 		for(int i = 0; i < codelist.length; i++) {
+			System.out.printf("[%d/%d] %s\n", i + 1, codelist.length, codelist[i].getAbsoluteFile() );
 			String codename = codelist[i].getAbsolutePath();
 			int substring_index = (int) input_folder.getAbsolutePath().length();
 			
 			File inputfile = codelist[i];
-			File outputfile = new File(output_folder.getAbsolutePath() + codename.substring(substring_index));
+			File outputfile = new File(output_folder.getAbsolutePath() + codename.substring(substring_index) + ".string");
 			
-			System.out.println(inputfile.getAbsolutePath());
-			System.out.println(outputfile.getAbsolutePath());
+			ExtractText.extractTextFromFile(inputfile, outputfile);
 		}
 		
-		System.out.println("ok");
+		System.out.println("end");
 		System.exit(0);
 	}
 	

@@ -170,7 +170,8 @@ public class ByteString {
 
 	/**
 	 * 指定したバイト配列から、Stringに変換します。
-	 * 失敗した場合は、NULLを返します。
+	 * - 失敗した場合は NULL を返します。
+	 * - 改行コードは LF のみとなります。
 	 * @param binary 文字列のバイト配列
 	 * @param charsetName エンコードタイプ
 	 * @return 文字列
@@ -182,7 +183,7 @@ public class ByteString {
 			if(!Arrays.equals(binary, string_byte)) {
 				return null;
 			}
-			return tmp;
+			return tmp.replaceAll("\r?\n", "\n");
 		}
 		catch(UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -192,7 +193,8 @@ public class ByteString {
 
 	/**
 	 * 指定したバイト配列から、Stringに変換します。
-	 * 失敗した場合は、NULLを返します。
+	 * - 失敗した場合は NULL を返します。
+	 * - 改行コードは LF のみとなります。
 	 * @param binary 文字列のバイト配列
 	 * @return 文字列
 	 */
@@ -236,6 +238,8 @@ public class ByteString {
 
 	/**
 	 * 指定したバイト配列から、Stringに変換します。
+	 * - 失敗した場合は NULL を返します。
+	 * - 改行コードは LF のみとなります。
 	 * @param binary 文字列のバイト配列
 	 * @param charsetName エンコードタイプ
 	 * @return 文字列
@@ -243,7 +247,7 @@ public class ByteString {
 	public static String getStringFromByte(byte[] binary,String charsetName) {
 		try {
 			String tmp = new String(binary, charsetName);
-			return tmp;
+			return tmp.replaceAll("\r?\n", "\n");
 		}
 		catch(UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -252,8 +256,8 @@ public class ByteString {
 	}
 
 	/**
-	 * 指定したバイト配列から、Stringに変換します。
-	 * 失敗した場合は、NULLを返します。
+	 * 指定したバイト配列から文字列を読み込み、1行ごとの文字列配列に変換します。
+	 * - 失敗した場合は NULL を返します。
 	 * @param binary 文字列のバイト配列
 	 * @return 文字列の配列
 	 */
@@ -262,11 +266,12 @@ public class ByteString {
 		if(x == null) {
 			return null;
 		}
-		return x.split("\r?\n");
+		return x.split("\n");
 	}
 
 	/**
-	 * 指定したバイト配列から、Stringに変換します。
+	 * 指定したバイト配列から文字列を読み込み、1行ごとの文字列配列に変換します。
+	 * - 失敗した場合は NULL を返します。
 	 * @param binary 文字列のバイト配列
 	 * @param charsetName エンコードタイプ
 	 * @return 文字列の配列
@@ -276,7 +281,7 @@ public class ByteString {
 		if(x == null) {
 			return null;
 		}
-		return x.split("\r?\n");
+		return x.split("\n");
 	}
 
 }
