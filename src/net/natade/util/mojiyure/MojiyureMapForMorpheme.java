@@ -91,41 +91,9 @@ public class MojiyureMapForMorpheme {
 	 * @return
 	 */
 	public String getHintMojiyure(Token token) {
-		HashMap<String, String> map = this.getMap(token);
-		
-		// 対応していない品詞は終了
-		if(map == null) {
-			return null;
-		}
-		String written_string = token.getSurface();
-		String normalized_string = token.getLemmaReadingForm();
-		String key_string = null;
-		
-		// 名詞以外は書き方が揺れる場合があるので読み仮名を考慮する
-		if(token.getPartOfSpeechLevel1().equals("名詞")) {
-			key_string = normalized_string;
-		}
-		else {
-			String yomigana_string = token.getPronunciation();
-			key_string = yomigana_string + "_" + normalized_string;
-		}
-		
-		String hit_string = map.get(key_string);
-
-		// 存在しない場合は登録して終了
-		if(hit_string == null) {
-			map.put(key_string, written_string);
-			return null;
-		}
-		
-		// 書き方が同じであれば文字揺れしていない
-		if(written_string.equals(hit_string)) {
-			return null;
-		}
-		
-		return written_string + " != " + hit_string + "";
 		
 		/*
+		 * 
 		// 検索ヒット箇所
 		System.out.println("ヒット："+ token.getSurface());
 		
@@ -159,6 +127,46 @@ public class MojiyureMapForMorpheme {
 		System.out.println(token.getWrittenBaseForm());
 		System.out.println(token.getWrittenForm());
 		*/
+
+		HashMap<String, String> map = this.getMap(token);
+		
+		// 特定の品詞をしない
+		if(map == null) {
+			return null;
+		}
+		String written_string = token.getSurface();
+		String normalized_string = token.getLemmaReadingForm();
+		String key_string = null;
+		
+		// 対応していない文字は処理をしない
+		if(normalized_string.equals("*")) {
+			return null;
+		}
+		
+		// 名詞以外は書き方が揺れる場合があるので読み仮名を考慮する
+		if(token.getPartOfSpeechLevel1().equals("名詞")) {
+			key_string = normalized_string;
+		}
+		else {
+			String yomigana_string = token.getPronunciation();
+			key_string = yomigana_string + "_" + normalized_string;
+		}
+		
+		String hit_string = map.get(key_string);
+
+		// 存在しない場合は登録して終了
+		if(hit_string == null) {
+			map.put(key_string, written_string);
+			return null;
+		}
+		
+		// 書き方が同じであれば文字揺れしていない
+		if(written_string.equals(hit_string)) {
+			return null;
+		}
+		
+		return written_string + " != " + hit_string + "";
+		
 	}
 	
 
