@@ -9,6 +9,5 @@
 	<classpathentry kind="lib" path="libs/kuromoji-core/kuromoji-core-0.9.0.jar"/>
 	<classpathentry kind="lib" path="libs/kuromoji-unidic/kuromoji-unidic-0.9.0.jar"/>
 	<classpathentry kind="lib" path="libs/gson/gson-2.8.9.jar"/>
-	<classpathentry kind="lib" path="libs/sqlite-jdbc/sqlite-jdbc-3.36.0.3.jar"/>
 	<classpathentry kind="output" path="tmp"/>
 </classpath>

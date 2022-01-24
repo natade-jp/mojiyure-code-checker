@@ -24,7 +24,12 @@ public class MojiyureCodeCheker {
 	 * 形態素分析エンジンを用いた文字揺れチェック用のマップ
 	 */
 	static MojiyureMapForMorpheme morpheme_map = new MojiyureMapForMorpheme();
-
+	
+	/**
+	 * ASCIIコードのみ
+	 */
+	static Pattern ascii_pattern = Pattern.compile("^[ -}\\s]+$");
+	
 	/**
 	 * 形態素分析を用いて、文字揺れをチェックする
 	 * 
@@ -32,6 +37,12 @@ public class MojiyureCodeCheker {
 	 * @param target_text 調べたい文字列
 	 */
 	public static void checkUsingMorphemeDictionary(int line_number, String target_text) {
+		
+		// ASCII コードのみの場合は、形態素分析は使用しない。
+		if(ascii_pattern.matcher(target_text).find()) {
+			return;
+		}
+		
 		List<Token> tokens = tokenizer.tokenize(target_text);
 		for (Token token : tokens) {
 			// チェックしてヒントを出す
