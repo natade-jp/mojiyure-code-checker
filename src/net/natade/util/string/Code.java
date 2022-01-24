@@ -52,7 +52,8 @@ public class Code {
 	}
 
 	/**
-	 * コメントがないコードから、文字列のみ出力する - 事前にコメントを除去した後に実行して下さい
+	 * コメントがないコードから、文字列のみ出力する
+	 * - 事前にコメントを除去した後に実行して下さい
 	 */
 	public String getExtractedString() {
 		ArrayList<Integer> char_array = new ArrayList<Integer>();
@@ -77,6 +78,7 @@ public class Code {
 					} else {
 						char_array.add(moji);
 					}
+					continue;
 				}
 			} else {
 				if (moji == '\"') {
@@ -98,6 +100,7 @@ public class Code {
 					} else {
 						char_array.add(moji);
 					}
+					continue;
 				}
 			} else {
 				if (moji == '\'') {
@@ -120,16 +123,65 @@ public class Code {
 	 */
 	public void removeComment() {
 		int[] data = this.code;
+		boolean istextA = false;
+		boolean istextB = false;
+		boolean isescape = false;
 		boolean commentA1 = false;
 		boolean commentA2 = false;
 		boolean commentB2 = false;
 		boolean commentB3 = false;
 		for (int i = 0; i < data.length; i++) {
+			int moji = data[i];
+			
+			if (!commentA2 && !commentB2) {
+				// 文字列（ダブルクォーテーション）
+				if (istextA) {
+					if (isescape) {
+						isescape = false;
+						continue;
+					} else {
+						// 文字列内部
+						if (moji == '\\') {
+							isescape = true;
+						} else if (moji == '\"') {
+							istextA = false;
+						}
+						continue;
+					}
+				} else {
+					if (moji == '\"') {
+						istextA = true;
+						continue;
+					}
+				}
+	
+				// 文字列（シングルクォーテーション）
+				if (istextB) {
+					if (isescape) {
+						isescape = false;
+						continue;
+					} else {
+						// 文字列内部
+						if (moji == '\\') {
+							isescape = true;
+						} else if (moji == '\'') {
+							istextB = false;
+						}
+						continue;
+					}
+				} else {
+					if (moji == '\'') {
+						istextB = true;
+						continue;
+					}
+				}
+			}
+			
 			// コメント /*
 			if (commentB2) {
 				// コメント内部
 				if (commentB3) {
-					if (data[i] == '/') {
+					if (moji == '/') {
 						commentB2 = false;
 						commentB3 = false;
 						data[i] = ' ';
@@ -138,13 +190,13 @@ public class Code {
 						commentB3 = false;
 					}
 				} else {
-					if (data[i] == '*') {
+					if (moji == '*') {
 						commentB3 = true;
 						data[i] = ' ';
 						continue;
 					}
 				}
-				if (isDiverted(data[i])) {
+				if (isDiverted(moji)) {
 					continue;
 				}
 				data[i] = ' ';
@@ -154,7 +206,7 @@ public class Code {
 			// コメント //
 			if (commentA2) {
 				// コメント内部
-				if (isDiverted(data[i])) {
+				if (isDiverted(moji)) {
 					commentA1 = false;
 					commentA2 = false;
 					continue;
@@ -162,11 +214,11 @@ public class Code {
 				data[i] = ' ';
 				continue;
 			} else if (commentA1) {
-				if (data[i] == '/') {
+				if (moji == '/') {
 					commentA2 = true;
 					data[i] = ' ';
 					continue;
-				} else if (data[i] == '*') {
+				} else if (moji == '*') {
 					commentB2 = true;
 					commentA1 = false;
 					data[i] = ' ';
@@ -175,7 +227,7 @@ public class Code {
 					commentA1 = false;
 				}
 			} else {
-				if (data[i] == '/') {
+				if (moji == '/') {
 					commentA1 = true;
 					data[i] = ' ';
 					continue;
@@ -184,63 +236,5 @@ public class Code {
 		}
 	}
 
-	/**
-	 * コメントがないコードから文字列を削除する - 事前にコメントを除去した後に実行して下さい
-	 */
-	public void removeString() {
-		int[] data = this.code;
-		boolean istextA = false;
-		boolean istextB = false;
-		boolean isescape = false;
-		for (int i = 0; i < data.length; i++) {
-			// 文字列（ダブルクォーテーション）
-			if (istextA) {
-				if (isescape) {
-					isescape = false;
-					data[i] = ' ';
-					continue;
-				} else {
-					// 文字列内部
-					if (data[i] == '\\') {
-						isescape = true;
-					} else if (data[i] == '\"') {
-						istextA = false;
-					}
-					data[i] = ' ';
-					continue;
-				}
-			} else {
-				if (data[i] == '\"') {
-					istextA = true;
-					data[i] = ' ';
-					continue;
-				}
-			}
-
-			// 文字列（シングルクォーテーション）
-			if (istextB) {
-				if (isescape) {
-					isescape = false;
-					data[i] = ' ';
-					continue;
-				} else {
-					// 文字列内部
-					if (data[i] == '\\') {
-						isescape = true;
-					} else if (data[i] == '\'') {
-						istextB = false;
-					}
-					data[i] = ' ';
-					continue;
-				}
-			} else {
-				if (data[i] == '\'') {
-					istextB = true;
-					data[i] = ' ';
-					continue;
-				}
-			}
-		}
-	}
 
 }
