@@ -49,25 +49,24 @@ class ExtractText {
 	 */
 	public static void main(String[] args) {
 		ArgumentAnalysis args_data = new ArgumentAnalysis(args);
+		
+		// 引数のチェック
 		String input_folder_string = args_data.getValue(Pattern.compile("-src", Pattern.CASE_INSENSITIVE));
 		String output_folder_string = args_data.getValue(Pattern.compile("-out", Pattern.CASE_INSENSITIVE));
 		String extensin_string = args_data.getValue(Pattern.compile("-extensin", Pattern.CASE_INSENSITIVE));
-
 		if ((input_folder_string == null) || (output_folder_string == null)) {
 			System.out.println("入力フォルダと、出力フォルダが指定する必要があります。");
 			System.out.println("src=[" + input_folder_string + "]");
 			System.out.println("out=[" + output_folder_string + "]");
 			System.exit(1);
 		}
-
 		File input_folder = new File(input_folder_string);
 		File output_folder = new File(output_folder_string);
 		if (!input_folder.isDirectory()) {
-			System.out.println("入力フォルダはフォルダを設定する必要がある。[" + input_folder.getAbsolutePath() + "]");
+			System.out.println("入力フォルダはフォルダを設定する必要があります。");
 			System.out.println("src=[" + input_folder_string + "]");
 			System.exit(2);
 		}
-
 		Pattern extensin_pattern = null;
 		if (extensin_string == null) {
 			extensin_pattern = Pattern.compile("\\.(c|cpp|cs|java|js|json)$", Pattern.CASE_INSENSITIVE);
@@ -75,9 +74,8 @@ class ExtractText {
 			extensin_pattern = Pattern.compile(extensin_string, Pattern.CASE_INSENSITIVE);
 		}
 
+		// 処理開始
 		File[] codelist = FileUtil.findList(input_folder, new PetternFileFilter(extensin_pattern));
-
-		System.out.println("start");
 
 		for (int i = 0; i < codelist.length; i++) {
 			System.out.printf("[%d/%d] %s\n", i + 1, codelist.length, codelist[i].getAbsoluteFile());
@@ -91,7 +89,7 @@ class ExtractText {
 			ExtractText.extractTextFromFile(inputfile, outputfile);
 		}
 
-		System.out.println("end");
+		// 処理終了
 		System.exit(0);
 	}
 
