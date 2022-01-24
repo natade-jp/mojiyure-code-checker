@@ -8,6 +8,7 @@ public class FileUtil {
 
 	/**
 	 * 指定したファイル配下のファイルとフォルダのリストを作成する
+	 * 
 	 * @param target フォルダ
 	 * @param filter ファイルのフィルタ
 	 * @return 配下のファイル
@@ -18,23 +19,23 @@ public class FileUtil {
 		return list.toArray(new File[list.size()]);
 	}
 
-
 	/**
 	 * ファイルのリストを再帰的に作成する
-	 * @param target ファイルかフォルダ
-	 * @param filter ファイルのフィルタ
+	 * 
+	 * @param target   ファイルかフォルダ
+	 * @param filter   ファイルのフィルタ
 	 * @param filelist 追加先のリスト
 	 */
 	static private void createFileListFunction(File target, FileFilter filter, ArrayList<File> filelist) {
-		if(filter.accept(target)) {
+		if (filter.accept(target)) {
 			filelist.add(target);
 		}
-		if(target.isDirectory()) {
+		if (target.isDirectory()) {
 			File[] files = target.listFiles();
-			if(files == null) {
+			if (files == null) {
 				return;
 			}
-			for(File file : files) {
+			for (File file : files) {
 				FileUtil.createFileListFunction(file, filter, filelist);
 			}
 		}
