@@ -13,5 +13,8 @@ int main(void){
 	printf("おいしい寿司をたべる\n");
 	printf("フォルダを開く\n");
 	printf("フォルダーをひらく\n");
+	
+	printf("I want to eat sushi.");
+	
 	return 0;
 }
