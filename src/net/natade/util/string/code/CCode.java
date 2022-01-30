@@ -1,63 +1,26 @@
-package net.natade.util.string;
+package net.natade.util.string.code;
 
 import java.util.ArrayList;
 
-/**
- * ソースコードを扱うクラス
- * 
- * @author natade
- */
-public class Code {
+import net.natade.util.string.StringUTF32;
 
-	/**
-	 * ソースコードの文字列
-	 */
-	protected int[] code = new int[0];
+public class CCode extends Code {
 
-	/**
-	 * 指定した文字コードが改行か調べる
-	 * 
-	 * @param code
-	 * @return
-	 */
-	protected static boolean isDiverted(int code) {
-		switch (code) {
-		case 0x000D:// CR Carriage Return
-		case 0x000A:// LF Line Feed
-		case 0x0085:// NEL Next Line
-		case 0x000B:// VT Vertical Tab
-		case 0x000C:// FF Form Feed
-		case 0x2028:// LS Line Separator
-		case 0x2029:// PS Paragraph Separator
-			return (true);
-		}
-		;
-		return (false);
+	public CCode() {
+		super();
+	}
+	
+	public CCode(String code_text) {
+		super(code_text);
 	}
 
-	/**
-	 * ソースコード用のデータを用意する
-	 * 
-	 * @param code_text
-	 */
-	public Code(String code_text) {
-		this.code = (new StringUTF32(code_text)).createUTF32Array();
+	public Code create(String code_text) {
+		return new CCode(code_text);
 	}
 
-	/**
-	 * 内部のデータから文字列を作成する
-	 */
-	public String toString() {
-		return (new StringUTF32(this.code)).toString();
-	}
-
-	/**
-	 * コメントがないコードから、文字列のみ出力する
-	 * - 事前にコメントを除去した後に実行して下さい
-	 */
-	public String getExtractedString() {
+	public StringUTF32 getExtractedString() {
+		int[] data = this.getRemoveComment().createUTF32Array();
 		ArrayList<Integer> char_array = new ArrayList<Integer>();
-		int[] data = this.code;
 		boolean istextA = false;
 		boolean istextB = false;
 		boolean isescape = false;
@@ -109,20 +72,20 @@ public class Code {
 				}
 			}
 
+			// 改行部分は追加する
 			if (isDiverted(moji)) {
 				char_array.add(moji);
 			}
 		}
 
 		int[] int_array = char_array.stream().mapToInt(x -> x).toArray();
-		return (new StringUTF32(int_array)).toString();
+		return new StringUTF32(int_array);
 	}
 
-	/**
-	 * 内部のコードから、コメントアウトされている箇所を除去する
-	 */
-	public void removeComment() {
+	public StringUTF32 getRemoveComment() {
 		int[] data = this.code;
+		System.arraycopy(this.code, 0, data, 0, this.code.length);
+		
 		boolean istextA = false;
 		boolean istextB = false;
 		boolean isescape = false;
@@ -182,59 +145,65 @@ public class Code {
 				// コメント内部
 				if (commentB3) {
 					if (moji == '/') {
+						// */ なのでコメント解除
 						commentB2 = false;
 						commentB3 = false;
 						data[i] = ' ';
 						continue;
-					} else {
-						commentB3 = false;
-					}
-				} else {
-					if (moji == '*') {
-						commentB3 = true;
-						data[i] = ' ';
-						continue;
 					}
 				}
-				if (isDiverted(moji)) {
-					continue;
+				if (moji == '*') {
+					commentB3 = true;
 				}
-				data[i] = ' ';
+				else {
+					commentB3 = false;
+				}
+				if (!isDiverted(moji)) {
+					data[i] = ' ';
+				}
 				continue;
 			}
 
 			// コメント //
 			if (commentA2) {
 				// コメント内部
-				if (isDiverted(moji)) {
+
+				if (!isDiverted(moji)) {
+					data[i] = ' ';
+				}
+				else {
+					// 改行があったらコメントを解除
 					commentA1 = false;
 					commentA2 = false;
-					continue;
 				}
-				data[i] = ' ';
 				continue;
 			} else if (commentA1) {
 				if (moji == '/') {
+					// //
 					commentA2 = true;
+					data[i - 1] = ' ';
 					data[i] = ' ';
 					continue;
 				} else if (moji == '*') {
+					// /*
 					commentB2 = true;
 					commentA1 = false;
+					data[i - 1] = ' ';
 					data[i] = ' ';
 					continue;
 				} else {
+					// コメントではない
 					commentA1 = false;
 				}
 			} else {
 				if (moji == '/') {
 					commentA1 = true;
-					data[i] = ' ';
 					continue;
 				}
 			}
 		}
+
+		return new StringUTF32(data);
 	}
-
-
+	
 }
